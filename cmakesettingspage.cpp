@@ -142,8 +142,8 @@ public:
 CMakeToolItemModel::CMakeToolItemModel()
 {
     setHeader(QStringList() << tr("Name") << tr("Location"));
-    rootItem()->appendChild(new TreeItem(QStringList() << tr("Auto-detected") << QString() << QString()));
-    rootItem()->appendChild(new TreeItem(QStringList() << tr("Manual") << QString() << QString()));
+    rootItem()->appendChild(new StaticTreeItem({ tr("Auto-detected") }));
+    rootItem()->appendChild(new StaticTreeItem({ tr("Manual") }));
 
     foreach (const CMakeTool *item, CMakeToolManager::cmakeTools())
         addCMakeTool(item, false);
@@ -216,7 +216,7 @@ void CMakeToolItemModel::updateCMakeTool(const Core::Id &id, const QString &disp
 CMakeToolTreeItem *CMakeToolItemModel::cmakeToolItem(const Core::Id &id) const
 {
     auto matcher = [id](CMakeToolTreeItem *n) { return n->m_id == id; };
-    return findItemAtLevel<CMakeToolTreeItem *>(2, matcher);
+    return m_root->findSecondLevelChild<CMakeToolTreeItem *>(matcher);
 }
 
 CMakeToolTreeItem *CMakeToolItemModel::cmakeToolItem(const QModelIndex &index) const
@@ -241,7 +241,7 @@ void CMakeToolItemModel::apply()
     foreach (const Core::Id &id, m_removedItems)
         CMakeToolManager::deregisterCMakeTool(id);
 
-    foreach (auto item, itemsAtLevel<CMakeToolTreeItem *>(2)) {
+    auto predicate = [](CMakeToolTreeItem *item){
         item->m_changed = false;
 
         bool isNew = false;
@@ -262,7 +262,8 @@ void CMakeToolItemModel::apply()
                 item->m_changed = true;
             }
         }
-    }
+    };
+    m_root->forSecondLevelChildren<CMakeToolTreeItem *>(predicate);
 
     CMakeToolManager::setDefaultCMakeTool(defaultItemId());
 }
@@ -293,8 +294,8 @@ void CMakeToolItemModel::setDefaultItemId(const Core::Id &id)
 QString CMakeToolItemModel::uniqueDisplayName(const QString &base) const
 {
     QStringList names;
-    foreach (CMakeToolTreeItem *item, itemsAtLevel<CMakeToolTreeItem *>(2))
-        names << item->m_name;
+    auto pedicate = [&names](CMakeToolTreeItem *item){names << item->m_name;};
+    m_root->forSecondLevelChildren<CMakeToolTreeItem *>(pedicate);
 
     return ProjectExplorer::Project::makeUnique(base, names);
 }

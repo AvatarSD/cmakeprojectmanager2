@@ -68,6 +68,9 @@ SOURCES = builddirmanager.cpp \
     configmodel.cpp \
     cmaketoolchaininfo.cpp
 
+LIBS+=-L${QTC_BUILD}/lib/qtcreator \
+    -L${QTC_BUILD}/lib/qtcreator/plugins
+
 RESOURCES += cmakeproject.qrc
 
 OTHER_FILES += README.txt

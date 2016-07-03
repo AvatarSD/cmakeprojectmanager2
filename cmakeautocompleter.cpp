@@ -36,7 +36,7 @@ namespace Internal {
 
 CMakeAutoCompleter::CMakeAutoCompleter()
 {
-    setAutoParenthesesEnabled(true);
+    setAutoInsertBracketsEnabled(true);
 }
 
 bool CMakeAutoCompleter::isInComment(const QTextCursor &cursor) const

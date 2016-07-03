@@ -39,9 +39,9 @@ public:
 
     bool isInComment(const QTextCursor &cursor) const override;
     bool isInString(const QTextCursor &cursor) const override;
-    QString insertMatchingBrace(const QTextCursor &cursor, const QString &text, QChar la, int *skippedChars) const override;
+    QString insertMatchingBrace(const QTextCursor &cursor, const QString &text, QChar la, int *skippedChars) const /*override*/;
     int paragraphSeparatorAboutToBeInserted(QTextCursor &cursor, const TextEditor::TabSettings &tabSettings) override;
-    bool contextAllowsAutoParentheses(const QTextCursor &cursor, const QString &textToInsert) const override;
+    bool contextAllowsAutoParentheses(const QTextCursor &cursor, const QString &textToInsert) const /*override*/;
     bool contextAllowsElectricCharacters(const QTextCursor &cursor) const override;
 };
 

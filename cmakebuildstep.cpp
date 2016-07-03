@@ -188,11 +188,11 @@ bool CMakeBuildStep::init(QList<const BuildStep *> &earlierSteps)
     if (isCurrentExecutableTarget(m_buildTarget) && (!rc || rc->title().isEmpty())) {
         emit addTask(Task(Task::Error,
                           QCoreApplication::translate("ProjectExplorer::Task",
-                                    "You asked to build the current Run Configuration's build target only, "
-                                    "but it is not associated with a build target. "
-                                    "Update the Make Step in your build settings."),
-                        Utils::FileName(), -1,
-                        ProjectExplorer::Constants::TASK_CATEGORY_BUILDSYSTEM));
+                                                      "You asked to build the current Run Configuration's build target only, "
+                                                      "but it is not associated with a build target. "
+                                                      "Update the Make Step in your build settings."),
+                          Utils::FileName(), -1,
+                          ProjectExplorer::Constants::TASK_CATEGORY_BUILDSYSTEM));
         canInit = false;
     }
 
@@ -557,18 +557,25 @@ BuildStep *CMakeBuildStepFactory::restore(BuildStepList *parent, const QVariantM
     return 0;
 }
 
-QList<Core::Id> CMakeBuildStepFactory::availableCreationIds(BuildStepList *parent) const
-{
-    if (parent->target()->project()->id() == Constants::CMAKEPROJECT_ID)
-        return QList<Core::Id>() << Core::Id(MS_ID);
-    return QList<Core::Id>();
-}
+//QList<Core::Id> CMakeBuildStepFactory::availableCreationIds(BuildStepList *parent) const
+//{
+//    if (parent->target()->project()->id() == Constants::CMAKEPROJECT_ID)
+//        return QList<Core::Id>() << Core::Id(MS_ID);
+//    return QList<Core::Id>();
+//}
 
-QString CMakeBuildStepFactory::displayNameForId(Core::Id id) const
+//QString CMakeBuildStepFactory::displayNameForId(Core::Id id) const
+//{
+//    if (id == MS_ID)
+//        return tr("Build", "Display name for CMakeProjectManager::CMakeBuildStep id.");
+//    return QString();
+//}
+
+QList<ProjectExplorer::BuildStepInfo> CMakeBuildStepFactory::availableSteps(ProjectExplorer::BuildStepList *parent) const
 {
-    if (id == MS_ID)
-        return tr("Build", "Display name for CMakeProjectManager::CMakeBuildStep id.");
-    return QString();
+    if ((parent->target()->project()->id() == Constants::CMAKEPROJECT_ID)&&(parent->id() == MS_ID))
+        return {{ Core::Id(MS_ID), tr("Build", "Display name for CMakeProjectManager::CMakeBuildStep id.") }};
+    return {};
 }
 
 void CMakeBuildStep::processStarted()
